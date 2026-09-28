@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>LifeGuard 360 - Emergency Safety Dashboard</title>
+
+    <!-- Leaflet CSS -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    >
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ================= HEADER ================= -->
+    <header class="topbar">
+
+        <div class="brand">
+            <div class="brand-icon">🛡️</div>
+
+            <div>
+                <h1>LifeGuard <span>360</span></h1>
+                <p id="brandSubtitle">Emergency & Safety Dashboard</p>
+            </div>
+        </div>
+
+        <div class="header-actions">
+
+            <div class="live-status">
+                <span class="status-dot"></span>
+                <span id="locationStatus">Location checking...</span>
+            </div>
+
+            <button id="languageBtn" class="icon-btn" title="Change Language">
+                हिन्दी
+            </button>
+
+            <button id="themeBtn" class="icon-btn" title="Change Theme">
+                🌙
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- ================= MAIN ================= -->
+    <main class="container">
+
+        <!-- HERO -->
+        <section class="hero">
+
+            <div class="hero-content">
+
+                <span class="hero-badge">
+                    🚨 SMART EMERGENCY RESPONSE
+                </span>
+
+                <h2 id="heroTitle">
+                    Stay Safe. Get Help. Stay Connected.
+                </h2>
+
+                <p id="heroText">
+                    Find nearby emergency services using your live location,
+                    check weather conditions and access emergency numbers quickly.
+                </p>
+
+                <div class="hero-buttons">
+
+                    <button id="locateBtn" class="primary-btn">
+                        📍 Use My Live Location
+                    </button>
+
+                    <button id="shareBtn" class="secondary-btn">
+                        📤 Share Location
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div class="hero-card">
+                <div class="shield">🛡️</div>
+                <strong id="readyText">Safety System Ready</strong>
+                <span id="gpsText">Waiting for GPS...</span>
+            </div>
+
+        </section>
+
+
+        <!-- ================= EMERGENCY CALLS ================= -->
+        <section class="section">
+
+            <div class="section-heading">
+                <div>
+                    <span class="section-label">EMERGENCY</span>
+                    <h2 id="emergencyTitle">Emergency Numbers</h2>
+                </div>
+            </div>
+
+            <div class="emergency-grid">
+
+                <button class="emergency-card emergency-red" data-number="112">
+                    <span class="emergency-icon">🚨</span>
+                    <span>
+                        <strong>112</strong>
+                        <small id="emergencyLabel">Emergency</small>
+                    </span>
+                    <span class="call-icon">📞</span>
+                </button>
+
+                <button class="emergency-card emergency-blue" data-number="112">
+                    <span class="emergency-icon">👮</span>
+                    <span>
+                        <strong>112</strong>
+                        <small id="policeLabel">Police</small>
+                    </span>
+                    <span class="call-icon">📞</span>
+                </button>
+
+                <button class="emergency-card emergency-orange" data-number="101">
+                    <span class="emergency-icon">🚒</span>
+                    <span>
+                        <strong>101</strong>
+                        <small id="fireLabel">Fire</small>
+                    </span>
+                    <span class="call-icon">📞</span>
+                </button>
+
+                <button class="emergency-card emergency-green" data-number="108">
+                    <span class="emergency-icon">🚑</span>
+                    <span>
+                        <strong>108</strong>
+                        <small id="ambulanceLabel">Ambulance</small>
+                    </span>
+                    <span class="call-icon">📞</span>
+                </button>
+
+            </div>
+
+            <p class="call-note">
+                📱 On mobile, these buttons open the phone dialer.
+            </p>
+
+        </section>
+
+
+        <!-- ================= MAP + SERVICES ================= -->
+        <section class="section">
+
+            <div class="section-heading">
+
+                <div>
+                    <span class="section-label">LIVE MAP</span>
+                    <h2 id="mapTitle">Nearby Emergency Services</h2>
+                </div>
+
+                <button id="refreshServicesBtn" class="small-btn">
+                    🔄 Refresh
+                </button>
+
+            </div>
+
+
+            <!-- Search -->
+            <div class="search-area">
+
+                <div class="search-box">
+
+                    <span>🔎</span>
+
+                    <input
+                        type="text"
+                        id="serviceSearch"
+                        placeholder="Search hospital, police or fire station..."
+                    >
+
+                    <button id="clearSearchBtn">✕</button>
+
+                </div>
+
+                <div class="filter-buttons">
+
+                    <button class="filter-btn active" data-filter="all">
+                        All
+                    </button>
+
+                    <button class="filter-btn" data-filter="hospital">
+                        🏥 Hospital
+                    </button>
+
+                    <button class="filter-btn" data-filter="police">
+                        👮 Police
+                    </button>
+
+                    <button class="filter-btn" data-filter="fire">
+                        🚒 Fire
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="map-layout">
+
+                <!-- MAP -->
+                <div class="map-card">
+
+                    <div id="map"></div>
+
+                    <div class="map-overlay">
+
+                        <button id="mapLocationBtn" class="map-control">
+                            📍 My Location
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SERVICES -->
+                <div class="services-card">
+
+                    <div class="services-header">
+
+                        <div>
+                            <h3 id="servicesTitle">Nearby Services</h3>
+                            <span id="serviceCount">0 services</span>
+                        </div>
+
+                        <span id="serviceLoading" class="loading-text">
+                            Loading...
+                        </span>
+
+                    </div>
+
+                    <div id="servicesList" class="services-list">
+
+                        <div class="empty-state">
+                            <span>📍</span>
+                            <p>Allow location access to find nearby services.</p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= WEATHER ================= -->
+        <section class="section">
+
+            <div class="section-heading">
+
+                <div>
+                    <span class="section-label">LIVE WEATHER</span>
+                    <h2 id="weatherTitle">Current Weather</h2>
+                </div>
+
+                <button id="weatherRefreshBtn" class="small-btn">
+                    🔄 Update
+                </button>
+
+            </div>
+
+
+            <div class="weather-grid">
+
+                <div class="weather-main-card">
+
+                    <div class="weather-location">
+                        <span>📍</span>
+                        <div>
+                            <strong id="weatherLocation">Detecting location...</strong>
+                            <small id="weatherUpdated">Waiting for weather...</small>
+                        </div>
+                    </div>
+
+                    <div class="temperature-row">
+
+                        <span id="weatherEmoji" class="weather-emoji">
+                            🌤️
+                        </span>
+
+                        <div>
+                            <strong id="temperature">--°C</strong>
+                            <p id="weatherDescription">Loading...</p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="weather-stat">
+                    <span>🌡️</span>
+                    <small>Feels Like</small>
+                    <strong id="feelsLike">--°C</strong>
+                </div>
+
+                <div class="weather-stat">
+                    <span>💧</span>
+                    <small>Humidity</small>
+                    <strong id="humidity">--%</strong>
+                </div>
+
+                <div class="weather-stat">
+                    <span>💨</span>
+                    <small>Wind</small>
+                    <strong id="wind">-- km/h</strong>
+                </div>
+
+                <div class="weather-stat">
+                    <span>🌧️</span>
+                    <small>Rain</small>
+                    <strong id="rain">-- mm</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= ALERTS ================= -->
+        <section class="section">
+
+            <div class="section-heading">
+
+                <div>
+                    <span class="section-label">SAFETY MONITOR</span>
+                    <h2 id="alertsTitle">Weather & Safety Alerts</h2>
+                </div>
+
+            </div>
+
+            <div id="alertsContainer" class="alerts-container">
+
+                <div class="alert-card alert-loading">
+                    <span>⏳</span>
+                    <div>
+                        <strong>Checking weather alerts...</strong>
+                        <p>Please wait.</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= REPORT ================= -->
+        <section class="section">
+
+            <div class="section-heading">
+
+                <div>
+                    <span class="section-label">REPORT</span>
+                    <h2 id="reportTitle">Emergency Report</h2>
+                </div>
+
+            </div>
+
+
+            <div class="report-layout">
+
+                <form id="reportForm" class="report-form">
+
+                    <div class="form-group">
+
+                        <label for="reportType">
+                            Emergency Type
+                        </label>
+
+                        <select id="reportType" required>
+
+                            <option value="">
+                                Select emergency type
+                            </option>
+
+                            <option value="Medical">
+                                🏥 Medical
+                            </option>
+
+                            <option value="Fire">
+                                🚒 Fire
+                            </option>
+
+                            <option value="Police">
+                                👮 Police
+                            </option>
+
+                            <option value="Accident">
+                                🚗 Accident
+                            </option>
+
+                            <option value="Other">
+                                ⚠️ Other
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="reportLocation">
+                            Location
+                        </label>
+
+                        <input
+                            type="text"
+                            id="reportLocation"
+                            placeholder="Enter location"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="reportDescription">
+                            Description
+                        </label>
+
+                        <textarea
+                            id="reportDescription"
+                            rows="4"
+                            placeholder="Describe the emergency..."
+                            required
+                        ></textarea>
+
+                    </div>
+
+
+                    <button type="submit" class="primary-btn full-btn">
+                        🚨 Submit Report
+                    </button>
+
+                </form>
+
+
+                <div class="reports-card">
+
+                    <div class="reports-header">
+                        <h3>Saved Reports</h3>
+
+                        <button id="clearReportsBtn" class="danger-small-btn">
+                            Clear All
+                        </button>
+                    </div>
+
+                    <div id="reportsList">
+
+                        <div class="empty-state">
+                            <span>📝</span>
+                            <p>No reports yet.</p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ================= TOAST ================= -->
+    <div id="toast" class="toast">
+        <span id="toastIcon">✓</span>
+        <span id="toastMessage">Success</span>
+    </div>
+
+
+    <!-- Leaflet JS -->
+    <script
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+    </script>
+
+    <!-- Custom JS -->
+    <script src="script.js"></script>
+
+</body>
+</html>
